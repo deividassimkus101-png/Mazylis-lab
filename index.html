@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 <html lang="lt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mažylio laboratorija</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mažylio laboratorija – Pagrindinis meniu</title>
+  <style>
+    :root{
+      --bg:#0f1117; --ink:#e8eef6; --muted:#93a1b1;
+      --card:#171a22; --edge:#273043; --acc:#13c2a3;
+      --btn:#12b48f; --btn-ink:#001b16;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font:16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu;
+      background:var(--bg); color:var(--ink);
+    }
+    header,main,footer{max-width:1050px; margin:0 auto; padding:18px}
+    header{ text-align:center; padding-top:28px}
+    h1{ margin:0 0 6px; font-size:clamp(1.6rem,3.6vw,2.3rem);}
+    h2{ margin:0 0 18px; color:var(--muted); font-weight:500}
+    nav{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:8px 0 16px}
+    nav a{
+      color:var(--acc); text-decoration:none; font-weight:600;
+      padding:6px 10px; border-radius:10px; background:transparent;
+    }
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns:1fr;
+    }
+    @media(min-width:760px){ .grid{ grid-template-columns:repeat(2,1fr);} }
+    .card{
+      background:var(--card); border:1px solid var(--edge);
+      padding:16px; border-radius:14px; box-shadow:0 5px 10px rgba(0,0,0,.25);
+    }
+    .card h3{ margin:0 0 6px }
+    .muted{ color:var(--muted); font-size:.95rem }
+    .btn{
+      display:inline-block; margin-top:12px; padding:11px 14px;
+      background:var(--btn); color:var(--btn-ink); text-decoration:none;
+      border-radius:12px; font-weight:700; border:0; cursor:pointer;
+    }
+    .btn[aria-disabled="true"]{ opacity:.55; cursor:not-allowed }
+    footer{ text-align:center; color:var(--muted); font-size:.9rem; padding:24px 18px 36px}
+  </style>
 </head>
 <body>
-  <h1>👶🦅 Sveikas atvykęs į Mažylio laboratoriją!</h1>
-  <p>Čia bus mūsų įrankiai ir skaičiuotuvai.</p>
-  <p><a href="prob.html">⚡️ Atidaryti Greitą konverterį</a></p>
+  <header>
+    <h1>🧪 Mažylio laboratorija</h1>
+    <h2>Pagrindinis meniu – visi mūsų įrankiai vienoje vietoje</h2>
+    <nav>
+      <a href="index.html">Pradžia</a>
+      <a href="prob.html">Greitas konverteris</a>
+      <!-- Žemiau nuorodos atsiras kai sukursim puslapius
+      <a href="risk.html">Rizikos valdymas</a>
+      <a href="multiple.html">Multiple statymai</a>
+      <a href="history.html">Statymų istorija</a>
+      -->
+    </nav>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h3>🎯 Greitas konverteris</h3>
+      <p class="muted">Implied p, overround, „fair“ koefai ir Kelly statymas. Pagrindinis darbo arkliukas.</p>
+      <a class="btn" href="prob.html">Atidaryti</a>
+    </section>
+
+    <section class="card">
+      <h3>🛡️ Rizikos valdymas</h3>
+      <p class="muted">Kelly frakcija + saugikliai („cap %“, dienos limitas). <em>Greitai</em>.</p>
+      <a class="btn" aria-disabled="true">Greitai</a>
+    </section>
+
+    <section class="card">
+      <h3>🧩 Multiple statymai</h3>
+      <p class="muted">Kombinacijų skaičiuotuvas, EV/kelias, saugesnės alternatyvos. <em>Greitai</em>.</p>
+      <a class="btn" aria-disabled="true">Greitai</a>
+    </section>
+
+    <section class="card">
+      <h3>📒 Statymų istorija</h3>
+      <p class="muted">Rezultatų žurnalas ir grafikai (kapitalo kreivė). <em>Greitai</em>.</p>
+      <a class="btn" aria-disabled="true">Greitai</a>
+    </section>
+  </main>
+
+  <footer>🦅 Mažylis → Erelis • Sukurta mūsų rankomis • 2025</footer>
 </body>
 </html>
