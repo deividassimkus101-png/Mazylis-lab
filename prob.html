@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Greitas konverteris</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#0e1116; color:#eaf2ff; padding:20px; }
+    .card { background:#121923; padding:16px; margin:10px 0; border-radius:10px; }
+    .yes { color:#28d17c; font-weight:bold; }
+    .no { color:#ff606b; font-weight:bold; }
+  </style>
+</head>
+<body>
+  <h1>⚡ Greitas konverteris</h1>
+  <p>Įvesk koeficientus (atskirti kableliais):</p>
+  <input id="odds" type="text" value="3.30, 3.50, 2.12" style="width:100%">
+  <button onclick="calculate()">Skaičiuoti</button>
+
+  <div id="result" class="card"></div>
+
+  <script>
+    function calculate() {
+      const odds = document.getElementById('odds').value.split(',').map(x => parseFloat(x.trim()));
+      let sumInv = odds.reduce((s,o) => s + 1/o, 0);
+      let overround = (sumInv - 1) * 100;
+
+      let html = `<p>Overround: ${overround.toFixed(2)}%</p>`;
+      html += `<table border="1" cellpadding="6"><tr><th>Koef.</th><th>Implied %</th><th>Fair %</th><th>Value</th><th>Rekomendacija</th></tr>`;
+
+      odds.forEach(o => {
+        let implied = (1/o)*100;
+        let fair = (1/o)/sumInv*100;
+        let value = fair - implied;
+        let valueFlag = value > 0 ? "<span class='yes'>YRA</span>" : "<span class='no'>NĖRA</span>";
+        let advice = value > 0 ? "<span class='yes'>Statyti</span>" : "<span class='no'>Nestatyti</span>";
+        let outcome = Math.random() > 0.5 ? "<span class='yes'>Laimės</span>" : "<span class='no'>Nelaimės</span>";
+
+        html += `<tr>
+          <td>${o.toFixed(2)}</td>
+          <td>${implied.toFixed(2)}%</td>
+          <td>${fair.toFixed(2)}%</td>
+          <td>${valueFlag}</td>
+          <td>${advice} – ${outcome}</td>
+        </tr>`;
+      });
+
+      html += `</table>`;
+      document.getElementById('result').innerHTML = html;
+    }
+  </script>
+</body>
+</html>
