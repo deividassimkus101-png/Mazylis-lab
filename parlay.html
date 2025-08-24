@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multiple (parlay) – EV + Kelly</title>
+<style>
+:root{--bg:#0e1116;--ink:#eaf2ff;--mut:#a8b3c8;--card:#121923;--bad:#ff606b;--ok:#28d17c}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,Segoe UI,Roboto;background:var(--bg);color:var(--ink);padding:18px}
+h1{text-align:center;margin:0 0 10px}.lead{color:var(--mut);text-align:center;margin:0 0 18px}
+.grid{max-width:860px;margin:0 auto;display:grid;gap:14px}.card{background:var(--card);border:1px solid #233240;border-radius:14px;padding:16px}
+label{display:block;margin-top:8px;color:var(--mut)}input,select{width:100%;padding:10px 12px;border-radius:10px;background:#0f141a;color:var(--ink);border:1px solid #2a3041}
+.btn{display:inline-block;margin-top:12px;padding:10px 14px;border-radius:10px;background:#00d3;color:#002b27;font-weight:700;border:0;cursor:pointer}
+.badge{display:inline-block;padding:6px 10px;border-radius:10px;font-weight:700;margin:6px 6px 0 0}
+.good{background:rgba(40,209,124,.18);color:var(--ok);border:1px solid var(--ok)}
+.bad{background:rgba(255,96,107,.15);color:var(--bad);border:1px solid var(--bad)}
+small{color:var(--mut)}
+</style>
+</head>
+<body>
+<h1>Multiple (parlay) – EV + Kelly</h1>
+<p class="lead">Įvesk koeficientus ir savo p kiekvienam įvykiui (%, ta pačia tvarka).</p>
+
+<main class="grid">
+<section class="card">
+  <label>Koeficientai (atskirti kableliais)</label>
+  <input id="odds" placeholder="pvz.: 1.80, 1.70, 2.05" />
+  <label>Tavo p kiekvienam įvykiui (%)</label>
+  <input id="probs" placeholder="pvz.: 60, 55, 52" />
+  <label>Bankrolas (€)</label>
+  <input id="bank" type="number" step="0.01" value="100" />
+  <label>Kelly apimtis</label>
+  <select id="kfrac"><option value="1">100% Kelly</option><option value="0.5" selected>50% Kelly</option><option value="0.25">25% Kelly</option></select>
+  <button class="btn" id="calc">Apskaičiuoti</button>
+  <small>Pastaba: multiple EV priklauso nuo tikimybių sandaugos (prielaidą imam, kad įvykiai nepriklausomi).</small>
+</section>
+
+<section class="card" id="out" style="display:none">
+  <div id="flags"></div>
+  <p><strong>Bendras koef. o</strong> = <span id="o">–</span> &nbsp;|&nbsp;
+     <strong>Bendra tikimybė p</strong> = <span id="p">–</span></p>
+  <p><strong>Break-even p*</strong> = <span id="pb">–</span> &nbsp;|&nbsp;
+     <strong>Edge</strong> = <span id="edge">–</span> &nbsp;|&nbsp;
+     <strong>EV/€</strong> = <span id="ev">–</span></p>
+  <p><strong>Kelly f*</strong> = <span id="kf">–</span> → pasirinkta <span id="sel">50%</span> → 
+     <strong>Statymas ≈</strong> <span id="stake">0.00</span> €</p>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id), show=el=>el.style.display='';
+function fmtPct(x){return (x*100).toFixed(2)+'%'}; function fmt(x){return Number(x).toFixed(2)}
+
+$('calc').onclick=()=>{
+  const os=$('odds').value.split(',').map(s=>parseFloat(s.trim())).filter(x=>x>0);
+  const ps=$('probs').value.split(',').map(s=>parseFloat(s.trim())/100).filter(x=>x>0 && x<1);
+  if(os.length===0 || os.length!==ps.length){ alert('Patikrink: tiek pat koeficientų ir p%.'); return; }
+  const o = os.reduce((a,b)=>a*b,1);
+  const p = ps.reduce((a,b)=>a*b,1);
+  const pb = 1/o;
+  const edge = p - pb;
+  const EV = p*o - 1;
+  const b = o-1;
+  let kf = ((b*p)-(1-p))/b; if(isNaN(kf)||kf<0) kf=0;
+  const kfrac = parseFloat($('kfrac').value), bank=parseFloat($('bank').value||'0');
+  const stake= bank*kf*kfrac;
+
+  $('o').textContent=o.toFixed(4);
+  $('p').textContent=fmtPct(p);
+  $('pb').textContent=fmtPct(pb);
+  $('edge').textContent=fmtPct(edge);
+  $('ev').textContent=(EV>=0?'+':'')+EV.toFixed(3);
+  $('kf').textContent=(kf*100).toFixed(2)+'%';
+  $('sel').textContent=(kfrac*100).toFixed(0)+'%';
+  $('stake').textContent=fmt(stake);
+
+  const flags=[];
+  if(edge>=0){ flags.push('<span class="badge good">VALUE: TAIP</span>','<span class="badge good">STATYTI</span>'); }
+  else{ flags.push('<span class="badge bad">VALUE: NE</span>','<span class="badge bad">NESTATYTI</span>'); }
+  if(p>0.5) flags.push('<span class="badge good">Prognozė: dažniau LAIMĖS</span>');
+  else      flags.push('<span class="badge bad">Prognozė: dažniau NELAIMĖS</span>');
+  $('flags').innerHTML=flags.join(' ');
+  show($('out'));
+};
+</script>
+</body>
+</html>
